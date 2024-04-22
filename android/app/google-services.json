@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "778108789672",
+    "project_id": "aiapplogin-b762b",
+    "storage_bucket": "aiapplogin-b762b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:778108789672:android:8f0af9ed1186c60444f39d",
+        "android_client_info": {
+          "package_name": "com.example.ai_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYkxq1OKdn9QTTK8UGi66BNrjCerygOlA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
