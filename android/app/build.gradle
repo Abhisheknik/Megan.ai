@@ -23,6 +23,9 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+// Define the Kotlin version
+def kotlinVersion = "1.6.0"
+
 android {
     namespace "com.example.ai_app"
     compileSdk flutter.compileSdkVersion
@@ -34,7 +37,8 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        // Set the Kotlin version
+        jvmTarget = "1.8"
     }
 
     sourceSets {
@@ -62,7 +66,10 @@ flutter {
 }
 
 dependencies {
+    // Kotlin dependency with the specified version
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
-  implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
-
+    // Firebase dependency with BOM
+    implementation platform("com.google.firebase:firebase-bom:32.7.4")
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
 }

@@ -82,4 +82,25 @@ class FirebaseAuthService {
       throw e; // Throw the error to handle it in UI
     }
   }
+
+  // Save order details to Firestore (if not already implemented)
+  Future<void> saveOrderDetails(
+      String userId, Map<String, dynamic> orderData) async {
+    try {
+      await _firestore.collection('orders').add(orderData);
+    } catch (e) {
+      print("Error saving order details: $e");
+      throw e; // Throw the error to handle it in UI
+    }
+  }
+
+  Future<void> sendEmailVerification(User user) async {
+    try {
+      await user.sendEmailVerification();
+    } catch (e) {
+      print("Error sending email verification: $e");
+      throw e; // Throw the error to handle it in UI
+    }
+  }
+
 }

@@ -1,0 +1,42 @@
+{
+    "products": [
+        
+        {
+            "name": "hoodie",
+            "imageURL": "https://firebasestorage.googleapis.com/v0/b/aiapplogin-b762b.appspot.com/o/Tshirts%2FIMG-20240523-WA0001.jpg?alt=media&token=db6a7db2-80a9-4aa3-903a-09beaba2c86c",
+            "brand": "OSIRUS",
+            "price": 100
+        },
+        {
+            "name": "tarck",
+            "imageURL": "https://firebasestorage.googleapis.com/v0/b/aiapplogin-b762b.appspot.com/o/Tshirts%2FIMG-20240523-WA0002.jpg?alt=media&token=3c219135-947d-4194-9b70-b0f4d3bf46f3",
+            "brand": "OSIRUS",
+            "price": 100
+        },
+        {
+            "name": "Sweatshirt",
+            "imageURL": "https://firebasestorage.googleapis.com/v0/b/aiapplogin-b762b.appspot.com/o/Tshirts%2FIMG-20240523-WA0004.jpg?alt=media&token=6aa9155e-c36e-4dea-9150-652c0e4f2d1e",
+            "brand": "OSIRUS",
+            "price": 49
+        },
+        {
+            "name": "Cotton Pant",
+            "imageURL": "https://firebasestorage.googleapis.com/v0/b/aiapplogin-b762b.appspot.com/o/Tshirts%2FIMG-20240523-WA0005.jpg?alt=media&token=588d5712-a079-4f56-8fb8-dea0c089a967",
+            "brand": "OSIRUS",
+            "price": 58
+        },
+        {
+            "name": "Green Sweater",
+            "imageURL": "https://firebasestorage.googleapis.com/v0/b/aiapplogin-b762b.appspot.com/o/Tshirts%2FIMG-20240523-WA0007.jpg?alt=media&token=1606a774-4172-4298-9a45-1287968afd51",
+            "brand": "OSIRUS",
+            "price": 69
+        },
+        {
+            "name": "Green",
+            "imageURL": "https://firebasestorage.googleapis.com/v0/b/aiapplogin-b762b.appspot.com/o/Tshirts%2FIMG-20240523-WA0008.jpg?alt=media&token=7c628592-2ef6-4eab-92d9-f6eeef389f35",
+            "brand": "OSIRUS",
+            "price": 69
+        }
+        
+    ]
+}

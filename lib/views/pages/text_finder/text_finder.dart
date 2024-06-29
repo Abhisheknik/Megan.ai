@@ -15,7 +15,7 @@ class _TextFinder extends State<TextFinder> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(241, 8, 0, 23),
+      backgroundColor: Color.fromARGB(240, 0, 0, 0),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: Text(

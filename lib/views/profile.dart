@@ -1,13 +1,15 @@
 import 'dart:io';
 import 'package:ai_app/Packages/package.dart';
-import 'package:ai_app/const/image_url.dart';
 import 'package:ai_app/packages/package.dart';
+import 'package:ai_app/views/pages/about_us.dart';
+import 'package:ai_app/views/pages/ecom/orderpage.dart';
+import 'package:ai_app/views/pages/upcoming.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileAddPage extends StatefulWidget {
   const ProfileAddPage({Key? key}) : super(key: key);
@@ -158,8 +160,14 @@ class _ProfileAddPageState extends State<ProfileAddPage> {
     }
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(241, 8, 0, 23),
+      backgroundColor: Color.fromARGB(240, 0, 0, 0),
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         backgroundColor: Colors.transparent,
         title: Text(
           'Profile',
@@ -238,207 +246,330 @@ class ProfileForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                // Wrap the Stack in a container with Alignment.center
-                alignment: Alignment.center,
-                child: Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage: image != null
-                          ? FileImage(image!)
-                          : (imageUrl != null
-                              ? CachedNetworkImageProvider(imageUrl!)
-                              : AssetImage(igvector3)) as ImageProvider<Object>,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: -10,
-                      child: IconButton(
-                        color: Colors.white,
-                        icon: Icon(Icons.camera_alt),
-                        onPressed: showImagePicker,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
-              TextFormField(
-                controller: nameController,
-                style: TextStyle(color: Colors.white, fontFamily: regular),
-                decoration: InputDecoration(
-                  labelText: 'Name',
-                  labelStyle: TextStyle(color: Colors.white, fontSize: 18),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                    ),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                ),
-                keyboardType: TextInputType.name,
-              ),
-              SizedBox(height: 20),
-              TextFormField(
-                controller: emailController,
-                style: TextStyle(color: Color.fromARGB(255, 254, 254, 254)),
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  labelStyle: TextStyle(color: Colors.white, fontSize: 18),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                    ),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                readOnly: true,
-              ),
-              SizedBox(height: 10),
-              Container(
-                alignment: Alignment.centerLeft,
-                child: ElevatedButton(
-                  onPressed: () {
-                    onSubmit(nameController.text, emailController.text);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.transparent,
-                    // shape: RoundedRectangleBorder(
-                    //   borderRadius: BorderRadius.circular(20),
-                    // ),
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    // side: BorderSide(color: Colors.white),
-                    elevation: 0, // Remove button elevation
-                  ),
-                  child: Text(
-                    'Save ',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: regular, // or 'Courier' for example
-                    ),
-                  ),
-                ),
-              ),
-              Divider(
-                color: Colors.white, // Customize the color of the divider
-                thickness: 1, // Customize the thickness of the divider
-                height: 10, // Customize the height of the divider
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context,
-                          '/about_us'); // Navigate to the About Us page
-                    },
-                    child: Text(
-                      'About Us 👥',
-                      textAlign: TextAlign.left, // Align text to the left
-                      style: TextStyle(
-                        fontSize: 16, color: Colors.white,
-                        fontFamily: regular, // or 'Courier' for example
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(
-                          context, '/another_page'); // Navigate to another page
-                    },
-                    child: Text(
-                      'Upcoming Features 🌟',
-                      textAlign: TextAlign.left, // Align text to the left
-                      style: TextStyle(
-                        fontSize: 16, color: Colors.white,
-                        fontFamily: regular, // or 'Courier' for example
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(
-                          context, '/another_page'); // Navigate to another page
-                    },
-                    child: Text(
-                      'Help 🆘',
-                      textAlign: TextAlign.left, // Align text to the left
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontFamily: regular, // or 'Courier' for example
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // Navigator.pushNamed(
-                      //     context, '/another_page'); // Navigate to another page
-                    },
-                    child: Text(
-                      'Version 0.0.1',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontFamily: 'Roboto Mono', // or 'Courier' for example
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LoginPage(),
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Form(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  // Wrap the Stack in a container with Alignment.center
+                  alignment: Alignment.center,
+                  child: Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white, // Border color
+                            width: 2.0, // Border width
+                          ),
                         ),
-                      ); // Navigate to another page
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundImage: image != null
+                              ? FileImage(image!)
+                              : (imageUrl != null
+                                      ? CachedNetworkImageProvider(imageUrl!)
+                                      : AssetImage(igmars))
+                                  as ImageProvider<Object>,
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: -5,
+                        child: IconButton(
+                          color: Colors.white,
+                          icon: Icon(Icons.camera_alt),
+                          onPressed: showImagePicker,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
+                TextFormField(
+                  controller: nameController,
+                  style: TextStyle(color: Colors.white, fontFamily: regular),
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                    labelStyle: TextStyle(color: Colors.white, fontSize: 18),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                      ),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                  ),
+                  keyboardType: TextInputType.name,
+                ),
+                SizedBox(height: 20),
+                TextFormField(
+                  controller: emailController,
+                  style: TextStyle(color: Color.fromARGB(255, 254, 254, 254)),
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    labelStyle: TextStyle(color: Colors.white, fontSize: 18),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                      ),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  readOnly: true,
+                ),
+                SizedBox(height: 10),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      onSubmit(nameController.text, emailController.text);
                     },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.transparent,
+                      // shape: RoundedRectangleBorder(
+                      //   borderRadius: BorderRadius.circular(20),
+                      // ),
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      // side: BorderSide(color: Colors.white),
+                      elevation: 0, // Remove button elevation
+                    ),
                     child: Text(
-                      'Logout',
-                      textAlign: TextAlign.left,
+                      'Save ',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.white,
                         fontFamily: regular, // or 'Courier' for example
                       ),
                     ),
                   ),
-                ],
-              ),
-            ],
+                ),
+                Divider(
+                  color: Colors.white, // Customize the color of the divider
+                  thickness: 1, // Customize the thickness of the divider
+                  height: 10, // Customize the height of the divider
+                ),
+                SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AboutUsPage()));
+                        },
+                        child: Row(
+                          children: [
+                            Icon(Icons.info_outline,
+                                color: Colors.white), // Add your icon here
+                            SizedBox(
+                                width:
+                                    8), // Add some spacing between the icon and text
+                            Text(
+                              'About Us ',
+                              textAlign:
+                                  TextAlign.left, // Align text to the left
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontFamily:
+                                    'Roboto', // Replace with your font if necessary
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => OrderPage()));
+                        },
+                        child: Row(
+                          children: [
+                            Icon(Icons.shopping_cart_checkout,
+                                color: Colors.white), // Add your icon here
+                            SizedBox(
+                                width:
+                                    8), // Add some spacing between the icon and text
+                            Text(
+                              'My Orders',
+                              textAlign:
+                                  TextAlign.left, // Align text to the left
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontFamily:
+                                    'Roboto', // Replace with your font if necessary
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      // Add some spacing between the rows
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UpcomingFeaturePage(),
+                            ),
+                          ); // Navigate to another page
+                        },
+                        child: Row(
+                          children: [
+                            Icon(Icons.star_outline,
+                                color: Colors.white), // Add your icon here
+                            SizedBox(
+                                width:
+                                    8), // Add some spacing between the icon and text
+                            Text(
+                              'Upcoming Features ',
+                              textAlign:
+                                  TextAlign.left, // Align text to the left
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontFamily:
+                                    'Roboto', // Replace with your font if necessary
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20), // Add some spacing between the rows
+                      GestureDetector(
+                        onTap: () async {
+                          final Uri _emailLaunchUri = Uri(
+                            scheme: 'mailto',
+                            path: 'contact@meganai.com',
+                            queryParameters: {
+                              'subject': 'Inquiry'
+                            }, // You can customize the subject here
+                          );
+                          if (await canLaunch(_emailLaunchUri.toString())) {
+                            await launch(_emailLaunchUri.toString());
+                          } else {
+                            throw 'Could not launch email';
+                          }
+                        },
+                        child: Row(
+                          children: [
+                            Icon(Icons.contact_emergency,
+                                color: Colors.white), // Add your icon here
+                            SizedBox(
+                                width:
+                                    8), // Add some spacing between the icon and text
+                            Text(
+                              'Contact Us ',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontFamily:
+                                    'Roboto', // Replace with your font if necessary
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(height: 20), // Add some spacing between the rows
+                      GestureDetector(
+                        onTap: () {
+                          // Navigator.pushNamed(context, '/another_page'); // Navigate to another page
+                        },
+                        child: Row(
+                          children: [
+                            Icon(Icons.info_outline,
+                                color: Colors.white), // Add your icon here
+                            SizedBox(
+                                width:
+                                    8), // Add some spacing between the icon and text
+                            Text(
+                              'Version 1.0.0',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontFamily:
+                                    'Roboto Mono', // Replace with your font if necessary
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20), // Add some spacing between the rows
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(),
+                            ),
+                          ); // Navigate to another page
+                        },
+                        child: Row(
+                          children: [
+                            Icon(Icons.logout,
+                                color: Colors.white), // Add your icon here
+                            SizedBox(
+                                width:
+                                    8), // Add some spacing between the icon and text
+                            Text(
+                              'Logout',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontFamily:
+                                    'Roboto', // Replace with your font if necessary
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

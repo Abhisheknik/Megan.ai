@@ -1,5 +1,7 @@
 import 'dart:ui';
+import 'package:ai_app/views/ai_tool.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ai_app/const/image_url.dart';
 import 'package:ai_app/const/typography.dart';
 import 'package:ai_app/views/auth_screens/login_page.dart';
@@ -13,14 +15,30 @@ class Onbroadingppage extends StatefulWidget {
 
 class _OnbroadingppageState extends State<Onbroadingppage> {
   late PageController _pageController;
-
   int _pageIndex = 0;
   bool _showLetsGetStarted = false;
 
   @override
   void initState() {
-    _pageController = PageController(initialPage: 0);
     super.initState();
+    _pageController = PageController(initialPage: 0);
+    _checkFirstRun();
+  }
+
+  Future<void> _checkFirstRun() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
+
+    if (!isFirstRun) {
+      // Navigate to home page if not the first run
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => AiTool()),
+      );
+    } else {
+      // Set the flag to false so the splash screen won't show again
+      await prefs.setBool('isFirstRun', false);
+    }
   }
 
   @override
@@ -127,7 +145,7 @@ class _OnbroadingppageState extends State<Onbroadingppage> {
                                 setState(() {
                                   _showLetsGetStarted = true;
                                 });
-                                Navigator.push(
+                                Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => LoginPage(),
@@ -146,14 +164,7 @@ class _OnbroadingppageState extends State<Onbroadingppage> {
                                 ? Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(
-                                        "Let's Started",
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          fontFamily: semibold,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
+                                      Icon(Icons.arrow_forward),
                                     ],
                                   )
                                 : Row(
@@ -222,22 +233,22 @@ final List<Onbroad> onbroad_data = [
   ),
   Onbroad(
     image: igvector11,
-    title: "Find the item You've \nbeen looking for",
+    title: "Unlock AI Innovation Every Day",
     description:
-        "Love the item you found in the database \nand the database will be updated when the item is updated",
+        "Discover cutting-edge AI tools daily, and watch as our database evolves with the latest advancements.",
   ),
   Onbroad(
     image: igvector12,
-    title: "Find the item You've \nbeen looking for",
+    title: "Discover the AI Solution You've Been Seeking",
     description:
-        "Love the item you found in the database \nand the database will be updated when the item is updated",
+        "Explore our extensive database of AI tools and find the solution you need, with updates reflecting the forefront of AI technology.",
   ),
   Onbroad(
     image: igvector13,
-    title: "Find the item You've \nbeen looking for",
+    title: "Explore AI Innovations Tailored for You",
     description:
-        "Love the item you found in the database \nand the database will be updated when the item is updated",
-  ),
+        "Fall in love with the AI tools you discover here, knowing that our database grows and adapts alongside the rapidly evolving AI landscape.",
+  )
 ];
 
 class Onbroading extends StatelessWidget {

@@ -1,3 +1,4 @@
+import 'package:ai_app/views/auth_screens/user_verfi.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ai_app/Packages/package.dart';
 import 'package:ai_app/user_auth/firebase_auth_implementatio/firebase_auth_services.dart';
@@ -236,46 +237,72 @@ class _SignUpPageState extends State<SignUpPage> {
         _isSigning = true;
       });
 
-      // Form is valid, proceed with sign up
       String name = _usernameController.text;
       String email = _emailController.text;
       String password = _passwordController.text;
 
-      User? user =
-          await _auth.signUpWithEmailAndPassword(email, name, password);
+      try {
+        User? user =
+            await _auth.signUpWithEmailAndPassword(email, name, password);
 
-      setState(() {
-        _isSigning = false;
-      });
+        if (user != null) {
+          await _auth.sendEmailVerification(user);
 
-      if (user != null) {
-        // Sign up successful, navigate directly to login page
-        Navigator.pushReplacementNamed(context, "/login_page");
+          setState(() {
+            _isSigning = false;
+          });
 
-        // Show success message
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Sign Up Successful"),
-              content: Text("You have successfully signed up!"),
-              actions: <Widget>[
-                TextButton(
-                  child: Text("OK"),
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                  },
-                ),
-              ],
-            );
-          },
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EmailVerificationPage(user: user),
+            ),
+          );
+        } else {
+          setState(() {
+            _isSigning = false;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Sign up failed, please try again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } on FirebaseAuthException catch (e) {
+        setState(() {
+          _isSigning = false;
+        });
+
+        if (e.code == 'email-already-in-use') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('The email address is already in use.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Sign up failed, please try again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } catch (e) {
+        setState(() {
+          _isSigning = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Sign up failed, please try again.'),
+            backgroundColor: Colors.red,
+          ),
         );
-      } else {
-        // Sign up failed, show an error message
-        print("Some error happened");
       }
     } else {
-      // Form is not valid, show a warning
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please fill in all fields'),

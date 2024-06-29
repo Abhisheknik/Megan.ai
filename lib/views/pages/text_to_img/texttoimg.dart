@@ -20,229 +20,252 @@ class TextToImage extends ConsumerWidget {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: [
-                Text(
-                  'Megan AI',
-                  style: GoogleFonts.openSans(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.all(8),
-                          backgroundColor: Colors.white,
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ArtScreen()));
-                        },
-                        child: const Text(
-                          "My arts",
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.bold),
-                        )),
-                  ],
-                ),
-                const SizedBox(height: 50),
-                fWatch.isLoading == true
-                    ? Container(
-                        alignment: Alignment.center,
-                        height: 320,
-                        width: 320,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white, width: 3),
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: Image.memory(fWatch.imageData!),
-                      )
-                    : Container(
-                        alignment: Alignment.center,
-                        height: 320,
-                        width: width * 0.7,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[800],
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.image_outlined,
-                              size: 100,
-                              color: Colors.grey[400],
-                            ),
-                            const SizedBox(height: 20),
-                            Text(
-                              'No Image has been generated yet.',
-                              style: GoogleFonts.openSans(
-                                color: Colors.grey[400],
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                const SizedBox(height: 40),
-                Container(
-                  height: 50,
-                  width: width * 0.7,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[800],
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  child: TextField(
-                    controller: textController,
-                    style: GoogleFonts.openSans(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            backgroundColor: Colors.transparent,
+            leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              ),
+            ),
+            title: Text(
+              'Megan AI',
+              style: GoogleFonts.openSans(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 20.0),
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ArtScreen()),
+                    );
+                  },
+                  icon: Text(
+                    'My arts',
+                    style: TextStyle(
                       color: Colors.white,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.bold,
                     ),
-                    cursorColor: Colors.white,
-                    maxLines: 5,
-                    decoration: InputDecoration(
-                      hintText: 'Enter your prompt here...',
-                      hintStyle: GoogleFonts.openSans(
-                        color: Colors.grey[400],
-                        fontSize: 14,
+                  ),
+                ),
+              ),
+            ],
+            floating: true,
+            pinned: true,
+            snap: true,
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 50),
+                  fWatch.isLoading == true
+                      ? Container(
+                          alignment: Alignment.center,
+                          height: 320,
+                          width: 320,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white, width: 3),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Image.memory(fWatch.imageData!),
+                        )
+                      : Container(
+                          alignment: Alignment.center,
+                          height: 320,
+                          width: width * 0.7,
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 0, 0, 0),
+                            border: Border.all(color: Colors.white, width: 0.2),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.image_outlined,
+                                size: 100,
+                                color: Colors.grey[400],
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
+                                'No Image has been generated yet.',
+                                style: GoogleFonts.openSans(
+                                  color: Colors.grey[400],
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                  const SizedBox(height: 40),
+                  Container(
+                    height: 50,
+                    width: width * 0.7,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 0, 0, 0),
+                      border: Border.all(color: Colors.white, width: 0.2),
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: TextField(
+                      controller: textController,
+                      style: GoogleFonts.openSans(
+                        color: Colors.white,
+                        fontSize: 17,
                         fontWeight: FontWeight.w400,
                       ),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.all(12.0),
+                      cursorColor: Colors.white,
+                      maxLines: 5,
+                      decoration: InputDecoration(
+                        hintText: 'Enter your prompt here...',
+                        hintStyle: GoogleFonts.openSans(
+                          color: Colors.grey[400],
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.all(12.0),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        fRead.textToImage(textController.text, context);
-                        fRead.searchingChange(true);
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        height: 50,
-                        width: width * 0.3,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.white, Colors.white],
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: fWatch.isSearching == false
-                            ? Text(
-                                'Generate',
-                                style: GoogleFonts.openSans(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            : CircularProgressIndicator(
-                                color: Colors.black,
-                              ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        if (fWatch.imageData != null) {
-                          // Save the generated image to device gallery
-                          final result = await ImageGallerySaver.saveImage(
-                            Uint8List.fromList(fWatch.imageData!),
-                            quality: 100, // adjust image quality if needed
-                          );
-
-                          if (result['isSuccess']) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Image saved successfully'),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Failed to save image'),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                          }
-                        }
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        height: 50,
-                        width: width * 0.2,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.black, Colors.black],
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.download,
-                              color: Colors.white,
+                  const SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          fRead.textToImage(textController.text, context);
+                          fRead.searchingChange(true);
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: 50,
+                          width: width * 0.3,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color.fromARGB(255, 238, 236, 242),
+                                Color.fromARGB(255, 238, 237, 240),
+                              ],
                             ),
-                            SizedBox(width: 5),
-                          ],
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: fWatch.isSearching == false
+                              ? Text(
+                                  'Generate',
+                                  style: GoogleFonts.openSans(
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                              : CircularProgressIndicator(
+                                  color: Colors.black,
+                                ),
                         ),
                       ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        fRead.loadingChange(false);
-                        textController.clear();
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        height: 50,
-                        width: width * 0.3,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.black, Colors.black],
+                      GestureDetector(
+                        onTap: () async {
+                          if (fWatch.imageData != null) {
+                            // Save the generated image to device gallery
+                            final result = await ImageGallerySaver.saveImage(
+                              Uint8List.fromList(fWatch.imageData!),
+                              quality: 100, // adjust image quality if needed
+                            );
+
+                            if (result['isSuccess']) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Image saved successfully'),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Failed to save image'),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: 50,
+                          width: width * 0.2,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.black, Colors.black],
+                            ),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          'Clear',
-                          style: GoogleFonts.openSans(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.download,
+                                color: Colors.white,
+                              ),
+                              SizedBox(width: 5),
+                            ],
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                )
-              ],
+                      GestureDetector(
+                        onTap: () {
+                          fRead.loadingChange(false);
+                          textController.clear();
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: 50,
+                          width: width * 0.3,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color.fromARGB(255, 255, 255, 255),
+                                Color.fromARGB(255, 243, 243, 243)
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            'Clear',
+                            style: GoogleFonts.openSans(
+                              color: const Color.fromARGB(255, 0, 0, 0),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

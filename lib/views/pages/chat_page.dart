@@ -1,23 +1,36 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
-
-import 'package:ai_app/const/typography.dart';
+import 'package:ai_app/views/ai_tool.dart';
+import 'package:ai_app/views/pages/chatgemini/home_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
-import 'package:ai_app/const/color_platte.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:ai_app/const/typography.dart';
+import 'package:ai_app/const/color_platte.dart';
 import 'package:ai_app/const/image_url.dart';
 import 'package:ai_app/models/key_api.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key}) : super(key: key);
+  const ChatPage(
+      {Key? key, required String question, required String finalQuestion})
+      : super(key: key);
 
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatPage>
+    with SingleTickerProviderStateMixin {
+  late String userProfileImage = "";
+
+  late AnimationController _animationController;
+  final ValueNotifier<bool> _isListening = ValueNotifier<bool>(false);
+
   final OpenAI _openAI = OpenAI.instance.build(
     token: OPENAI_API_KEY,
     baseOption: HttpSetup(
@@ -33,6 +46,62 @@ class _ChatPageState extends State<ChatPage> {
   final List<ChatMessage> _messages = <ChatMessage>[];
   final List<ChatUser> _typingUser = <ChatUser>[];
   bool _isLoading = false;
+  final stt.SpeechToText _speech = stt.SpeechToText();
+  String _text = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _isListening.addListener(_toggleListeningAnimation);
+    _initializeSpeech();
+    _listenToUserData();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _isListening.removeListener(_toggleListeningAnimation);
+    _isListening.dispose();
+    super.dispose();
+  }
+
+  void _toggleListeningAnimation() {
+    if (_isListening.value) {
+      _animationController.repeat();
+    } else {
+      _animationController.reset();
+    }
+  }
+
+  void _listenToUserData() {
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      FirebaseAuth.instance.authStateChanges().listen((User? user) {
+        if (user != null) {
+          FirebaseFirestore.instance
+              .collection('sign_data')
+              .doc(user.uid)
+              .snapshots()
+              .listen((DocumentSnapshot snapshot) {
+            if (snapshot.exists) {
+              setState(() {
+                userProfileImage = snapshot.get('profile_picture') ?? "";
+              });
+            }
+          });
+        }
+      });
+    });
+  }
+
+  void updateUserData(String newProfilePicture) {
+    setState(() {
+      userProfileImage = newProfilePicture;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +113,7 @@ class _ChatPageState extends State<ChatPage> {
           child: Container(
             margin: EdgeInsets.only(right: 40),
             child: Text(
-              'GPT Chat',
+              'Ai Chat',
               style: TextStyle(color: Colors.white),
             ),
           ),
@@ -73,18 +142,41 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ),
         actions: [
-          IconButton(
-            color: Colors.white,
-            onPressed: () {
-              Navigator.of(context).pop();
+          PopupMenuButton<String>(
+            icon: Icon(Icons.filter_list, color: Colors.white),
+            onSelected: (String result) {
+              if (result == 'Gemini') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Chatgemini()),
+                );
+              } else if (result == 'ChatGPT') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChatPage(
+                            question: '',
+                            finalQuestion: '',
+                          )),
+                );
+              }
             },
-            icon: Icon(Icons.arrow_back),
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'Gemini',
+                child: Text('Switch to Gemini'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'ChatGPT',
+                child: Text('Switch to ChatGPT'),
+              ),
+            ],
           ),
         ],
       ),
       drawer: Drawer(
         child: Container(
-          color: Color.fromARGB(255, 15, 11, 22), // Set background color
+          color: Color.fromARGB(255, 15, 11, 22),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: ListView(
@@ -94,17 +186,17 @@ class _ChatPageState extends State<ChatPage> {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage(
-                          igvector3), // Replace 'igvector3.jpg' with your image asset path
-                      fit: BoxFit.cover, // Adjust this property as needed
+                          img8), // Replace with your image asset path
+                      fit: BoxFit.cover,
                     ),
                   ),
                   child: Stack(
                     children: [
                       BackdropFilter(
                         filter: ImageFilter.blur(
-                          sigmaX: 6,
-                          sigmaY: 6,
-                        ), // Adjust blur intensity as needed
+                          sigmaX: 3,
+                          sigmaY: 3,
+                        ),
                         child: Container(),
                       ),
                       Center(
@@ -112,18 +204,17 @@ class _ChatPageState extends State<ChatPage> {
                           children: [
                             CircleAvatar(
                               radius: 24,
-                              backgroundImage: NetworkImage(
-                                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoyGf1bPcpDfimN7bdXzD_t04-F819n1XF73fReG4yPQ&s', // Replace with your avatar image URL
-                              ),
+                              backgroundImage: userProfileImage.isNotEmpty
+                                  ? NetworkImage(userProfileImage)
+                                  : AssetImage(igvector14)
+                                      as ImageProvider<Object>,
                             ),
-                            SizedBox(
-                                width:
-                                    16), // Add spacing between avatar and text
+                            SizedBox(width: 16),
                             Text(
                               'Profile',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontFamily: semibold,
+                                fontFamily: 'semibold',
                                 fontSize: 28,
                                 shadows: [
                                   Shadow(
@@ -140,8 +231,7 @@ class _ChatPageState extends State<ChatPage> {
                     ],
                   ),
                 ),
-                SizedBox(
-                    height: 20), // Add spacing between header and list items
+                SizedBox(height: 20),
                 ListTile(
                   leading: Icon(
                     Icons.home,
@@ -162,7 +252,6 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                   ),
                   onTap: () {
-                    // Load the chat history
                     _loadChatHistory();
                   },
                 ),
@@ -189,7 +278,34 @@ class _ChatPageState extends State<ChatPage> {
                     setState(() {
                       _messages.clear();
                     });
-                    // Update the UI based on drawer item selected
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                  ),
+                  title: Text(
+                    'Back',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black,
+                          blurRadius: 8,
+                          offset: Offset(1, 1),
+                        ),
+                      ],
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AiTool(),
+                      ),
+                    );
                   },
                 ),
               ],
@@ -198,32 +314,55 @@ class _ChatPageState extends State<ChatPage> {
         ),
       ),
       body: _buildChatBody(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Container(
+        margin: EdgeInsets.only(right: 5),
+        child: FloatingActionButton(
+          onPressed: _listen,
+          tooltip: 'Listen',
+          mini: true,
+          backgroundColor: _isListening.value
+              ? Colors.red
+              : Colors.black, // Change color based on listening state
+          child: AnimatedBuilder(
+            animation: _animationController,
+            builder: (context, child) {
+              return Icon(
+                Icons.mic,
+                color: Colors.grey,
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildChatBody() {
-    return Container(
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(igvector3),
-          fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(
-            Colors.black.withOpacity(0.1),
-            BlendMode.dstATop,
+    return Column(
+      children: [
+        Expanded(
+          child: Container(
+            padding: EdgeInsets.all(10),
+            child: DashChat(
+              currentUser: _currentUser,
+              messageOptions: MessageOptions(
+                currentUserContainerColor: blackColor,
+                containerColor: purpleColor,
+                textColor: Colors.black,
+              ),
+              onSend: _getChatResponse,
+              messages: _messages,
+              inputOptions: InputOptions(
+                inputTextStyle: TextStyle(
+                    color: Color.fromARGB(255, 0, 0, 0)), // Text color
+                inputToolbarMargin:
+                    EdgeInsets.only(right: 50), // Adjust margin as needed
+              ),
+            ),
           ),
         ),
-      ),
-      child: DashChat(
-        currentUser: _currentUser,
-        messageOptions: MessageOptions(
-          currentUserContainerColor: blackColor,
-          containerColor: purpleColor,
-          textColor: Colors.black,
-        ),
-        onSend: _getChatResponse,
-        messages: _messages,
-      ),
+      ],
     );
   }
 
@@ -273,12 +412,58 @@ class _ChatPageState extends State<ChatPage> {
     await _saveChatHistory();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    // Load chat history only if _messages list is empty
-    if (_messages.isEmpty) {
-      _loadChatHistory();
+  void _initializeSpeech() {
+    _speech.initialize(
+      onError: (error) => print('Error: $error'),
+      onStatus: (status) => print('Status: $status'),
+    );
+  }
+
+  Future<void> _listen() async {
+    if (!_speech.isAvailable) {
+      print('Speech recognition is not available');
+      return;
+    }
+
+    try {
+      await _speech.listen(
+        onResult: (result) {
+          setState(() {
+            _text = result.recognizedWords ?? ''; // Ensure _text is not null
+          });
+        },
+        onSoundLevelChange: (double level) {
+          // You can use sound level change to provide visual feedback
+          // For example, you can change the size or color of the microphone button
+        },
+      );
+    } catch (e) {
+      print('Error starting speech recognition: $e');
+      return;
+    }
+
+    _isListening.value =
+        true; // Set the value notifier to true when listening starts
+
+    // Wait for speech recognition to complete
+    await Future.delayed(
+        const Duration(seconds: 5)); // Adjust pause duration as needed
+
+    _isListening.value =
+        false; // Set the value notifier to false when listening stops
+
+    // Send the recognized text as a single message
+    _sendMessage(_text);
+  }
+
+  void _sendMessage(String text) {
+    if (text.isNotEmpty) {
+      final message = ChatMessage(
+        user: _currentUser,
+        createdAt: DateTime.now(),
+        text: text,
+      );
+      _getChatResponse(message);
     }
   }
 
