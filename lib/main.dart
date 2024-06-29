@@ -15,7 +15,7 @@ void main() async {
   await Firebase.initializeApp(
     name: "aiapplogin",
     options: FirebaseOptions(
-        apiKey: "AIzaSyDVvNfhU7UJUHRFan54seq9_ZUjlls0UXI",
+        apiKey: "Your api key",
         appId: "1:778108789672:web:afbedc272a62703e44f39d",
         messagingSenderId: "778108789672",
         projectId: "aiapplogin-b762b",

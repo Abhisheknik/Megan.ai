@@ -1,3 +1,3 @@
-const OPENAI_API_KEY = "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";
+const OPENAI_API_KEY = "Your api key";
 
-const IMAGE_API_KEY = "sk-hv2BUWM5TuFLYWeR2H9KSJHpTtYzT69gb0EqQOZEnhoiNhxf";
+const IMAGE_API_KEY = "Your api key";
