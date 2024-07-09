@@ -96,3 +96,4 @@ Here are some screenshots of the MEGAN app:
   </tr>
 </table>
 
+# Megan-Portal
